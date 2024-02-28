@@ -34,12 +34,17 @@
 </head>
 <body style='fontFamily: "Arial, sans-serif"' class="overflow-hidden">
     <div class="mx-4 flex flex-col h-screen">
-        <header class="z-50 flex-shrink-0">
-            {% include 'layout/title.html' %}
+        <header class="z-50 flex-shrink-0 flex justify-between items-center">
+            <div>
+                {% include 'layout/title.html' %}
+            </div>
+            <nav>
+                {% include 'layout/navbar.html' %}
+            </nav>
         </header>
         <div class="flex flex-row flex-grow overflow-hidden">
-            <main class="flex-grow overflow-auto hide-scrollbar p-0 text-xl text-justify">
-                Hello World
+            <main id="content" class="flex-grow overflow-auto hide-scrollbar p-0 text-xl text-justify">
+                {% include main_content_template %}
             </main>
         </div>
     </div>
