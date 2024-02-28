@@ -1,0 +1,8 @@
+{
+  "metadata": {
+    "title": "LatentAccounting",
+    "description": "A accounting system utilizing latent spaces and vector databases for an promptable transaction history.",
+    "keywords": "accounting, latent, vector, database, transaction, history, promptable",
+    "author": "Pierre-Louis Suckrow"
+  }
+}

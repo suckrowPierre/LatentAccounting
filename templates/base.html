@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {{ page.title }}
+    </title>
+    <meta name="description" content={{ page.description }}>
+    <meta name="keywords" content={{ page.keywords }}>
+    <meta name="author" content={{ page.author }}>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @font-face {
+        font-family: 'EuropaGroteskSH';
+        src: url('/static/fonts/EuropaGroteskSH-Med.otf') format('opentype');
+        font-weight: 200;
+        font-style: normal;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .vertical-top {
+        vertical-align: top;
+        }
+    </style>
+</head>
+<body style='fontFamily: "Arial, sans-serif"' class="overflow-hidden">
+    <div class="mx-4 flex flex-col h-screen">
+        <header class="z-50 flex-shrink-0">
+            <h1>title</h1>
+        </header>
+        <div class="flex flex-row flex-grow overflow-hidden">
+            <main class="flex-grow overflow-auto hide-scrollbar p-0 text-xl text-justify">
+                Hello World
+            </main>
+        </div>
+    </div>
+</body>
+</html>
