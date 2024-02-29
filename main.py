@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 import json
 
 app = FastAPI()
@@ -23,16 +24,16 @@ pages = [
 ]
 
 
-async def page_metadata() -> dict:
-    return app_data.get('metadata', {})
+async def page_metadata(request: Request) -> PageMetadataViewModel:
+    return PageMetadataViewModel(request, app_data.get('metadata'))
 
 
 def find_page(page_name: str):
     return next((page for page in pages if page["route"].strip("/") == page_name), None)
 
 @app.get("/{page_name:path}")
-async def page_handler(request: Request, page_name: str = "", metadata: dict = Depends(page_metadata)):
-    context = {"request": request, "metadata": metadata, "pages": pages}
+async def page_handler(request: Request, page_name: str = "", metadata: PageMetadataViewModel = Depends(page_metadata)):
+    context = {"request": request, "metadata": metadata.to_dict(), "pages": pages}
     page = find_page(page_name)
 
     template_name = page["template"] if page else "pages/404.html"
