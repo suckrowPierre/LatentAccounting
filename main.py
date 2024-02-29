@@ -30,7 +30,6 @@ async def page_metadata() -> dict:
 def find_page(page_name: str):
     return next((page for page in pages if page["route"].strip("/") == page_name), None)
 
-
 @app.get("/{page_name:path}")
 async def page_handler(request: Request, page_name: str = "", metadata: dict = Depends(page_metadata)):
     context = {"request": request, "metadata": metadata, "pages": pages}
@@ -42,7 +41,6 @@ async def page_handler(request: Request, page_name: str = "", metadata: dict = D
     else:
         context["main_content_template"] = template_name
         return templates.TemplateResponse("base.html", context)
-
 
 if __name__ == "__main__":
     import uvicorn
