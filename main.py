@@ -1,9 +1,6 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
-from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
-
 import json
 
 app = FastAPI()
@@ -11,72 +8,43 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-with open("data/app_data.json", "r") as data_file:
-    app_data = json.load(data_file)
+try:
+    with open("data/app_data.json", "r") as data_file:
+        app_data = json.load(data_file)
+except IOError:
+    print("Error loading app_data.json")
+    app_data = {}
 
 pages = [
-    {
-        "title": "Dashboard",
-        "route": "/"
-    },
-    {
-        "title": "Transactions History",
-        "route": "/transactions"
-    },
-    {
-        "title": "Bank Accounts",
-        "route": "/banks"
-    },
-    {
-        "title": "Settings",
-        "route": "/settings"
-    }
+    {"title": "Dashboard", "route": "/", "template": "pages/dashboard.html"},
+    {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history.html"},
+    {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks.html"},
+    {"title": "Settings", "route": "/settings", "template": "pages/settings.html"},
 ]
 
+async def page_metadata() -> dict:
+    return app_data.get('metadata', {})
 
-async def get_full_html(request, route):
-    page_templates = {
-        "/": "pages/dashboard.html",
-        "/transactions": "pages/transaction_history.html",
-        "/banks": "pages/banks.html",
-        "/settings": "pages/settings.html",
-    }
-    selected_template = page_templates.get(route, "pages/404.html")
-
-    app_data.get('metadata')
-    vm = PageMetadataViewModel(request, app_data.get('metadata'))
-
-    return templates.TemplateResponse("base.html", {"request": request, "page": vm.to_dict(), "pages": pages,
-                                                    "main_content_template": selected_template})
-
-
-@app.get("/")
-async def root(request: Request):
+async def handle_request(request: Request, template_name: str, context: dict):
     if request.headers.get('HX-Request') == 'true':
-        print("htmx")
-        return templates.TemplateResponse("pages/dashboard.html", {"request": request})
-    return await get_full_html(request, "/")
+        return templates.TemplateResponse(template_name, context)
+    else:
+        context["main_content_template"] = template_name
+        return templates.TemplateResponse("base.html", context)
 
 
-@app.get("/transactions")
-async def transactions(request: Request):
-    if request.headers.get('HX-Request') == 'true':
-        print("htmx")
-        return templates.TemplateResponse("pages/transaction_history.html", {"request": request})
-    return await get_full_html(request, "/transactions")
 
-@app.get("/banks")
-async def banks(request: Request):
-    if request.headers.get('HX-Request') == 'true':
-        print("htmx")
-        return templates.TemplateResponse("pages/banks.html", {"request": request})
-    return await get_full_html(request, "/banks")
+@app.get("/{page_name:path}")
+async def page_handler(request: Request, page_name: str = "", metadata: dict = Depends(page_metadata)):
+    context = {"request": request, "metadata": metadata, "pages": pages}
+    page = next((page for page in pages if page["route"].strip("/") == page_name), None)
 
-@app.get("/settings")
-async def settings(request: Request):
-    if request.headers.get('HX-Request') == 'true':
-        print("htmx")
-        return templates.TemplateResponse("pages/settings.html", {"request": request})
-    return await get_full_html(request, "/settings")
+    if page:
+        return await handle_request(request, page["template"], context)
+    else:
+        return await handle_request(request, "pages/404.html", context)
 
 
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
