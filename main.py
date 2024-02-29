@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import json
@@ -22,10 +22,21 @@ pages = [
     {"title": "Settings", "route": "/settings", "template": "pages/settings.html"},
 ]
 
+
 async def page_metadata() -> dict:
     return app_data.get('metadata', {})
 
-async def handle_request(request: Request, template_name: str, context: dict):
+
+def find_page(page_name: str):
+    return next((page for page in pages if page["route"].strip("/") == page_name), None)
+
+
+@app.get("/{page_name:path}")
+async def page_handler(request: Request, page_name: str = "", metadata: dict = Depends(page_metadata)):
+    context = {"request": request, "metadata": metadata, "pages": pages}
+    page = find_page(page_name)
+
+    template_name = page["template"] if page else "pages/404.html"
     if request.headers.get('HX-Request') == 'true':
         return templates.TemplateResponse(template_name, context)
     else:
@@ -33,18 +44,7 @@ async def handle_request(request: Request, template_name: str, context: dict):
         return templates.TemplateResponse("base.html", context)
 
 
-
-@app.get("/{page_name:path}")
-async def page_handler(request: Request, page_name: str = "", metadata: dict = Depends(page_metadata)):
-    context = {"request": request, "metadata": metadata, "pages": pages}
-    page = next((page for page in pages if page["route"].strip("/") == page_name), None)
-
-    if page:
-        return await handle_request(request, page["template"], context)
-    else:
-        return await handle_request(request, "pages/404.html", context)
-
-
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
