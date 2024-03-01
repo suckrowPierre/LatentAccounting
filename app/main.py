@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi.responses import Response, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
@@ -31,6 +32,21 @@ async def page_metadata(request: Request) -> PageMetadataViewModel:
 
 def find_page(page_name: str):
     return next((page for page in pages if page["route"].strip("/") == page_name), None)
+
+@app.post("/new_account")
+async def new_account(request: Request):
+    id = 4
+    name = "New Account"
+    if request.headers.get('HX-Request') == 'true':
+        return templates.TemplateResponse("pages/banks/partials/account_list_element.html", {"request": request, "account": {"name": name, "id": id}})
+    else:
+        return {"status": "success", "id": id, "name": name}
+@app.delete("/delete_account/{id}")
+async def delete_account(request: Request, id: int):
+    if request.headers.get('HX-Request') == 'true':
+        return Response(content='', status_code=200)
+    else:
+        return {"status": "success"}
 
 @app.get("/{page_name:path}")
 async def page_handler(request: Request, page_name: str = "", metadata: PageMetadataViewModel = Depends(page_metadata)):
