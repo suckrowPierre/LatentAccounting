@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
+from viewmodels.accounts.accounts_view_model import AccountsViewModel
 import json
 
 app = FastAPI()
@@ -10,7 +11,7 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 try:
-    with open("data/app_data.json", "r") as data_file:
+    with open("./data/app_data.json", "r") as data_file:
         app_data = json.load(data_file)
 except IOError:
     print("Error loading app_data.json")
@@ -19,7 +20,7 @@ except IOError:
 pages = [
     {"title": "Dashboard", "route": "/", "template": "pages/dashboard.html"},
     {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history.html"},
-    {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks.html"},
+    {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks/banks.html", "viewModel": AccountsViewModel},
     {"title": "Settings", "route": "/settings", "template": "pages/settings.html"},
 ]
 
@@ -37,6 +38,11 @@ async def page_handler(request: Request, page_name: str = "", metadata: PageMeta
     page = find_page(page_name)
 
     template_name = page["template"] if page else "pages/404.html"
+
+    if page and "viewModel" in page:
+        viewmodel_instance = page["viewModel"](request)
+        context["page_data"] = viewmodel_instance.to_dict()
+
     if request.headers.get('HX-Request') == 'true':
         return templates.TemplateResponse(template_name, context)
     else:

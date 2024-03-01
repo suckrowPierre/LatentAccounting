@@ -1,0 +1,20 @@
+<div class="w-80 p-4 h-full flex flex-col text-base border-2 border-black rounded-xl mr-4">
+    <div class="flex justify-center items-center mb-1">
+        <!-- Button with manual adjustment for centering the plus -->
+        <button hx-post="/clicked" hx-trigger="click" hx-target="#parent-div" hx-swap="outerHTML"
+                class="rounded-full border-2 border-black w-5 h-5 flex justify-center items-center focus:outline-none">
+            <span class="text-lg transition-all duration-150 flex items-center justify-center" style="transform: translateY(-1px);">+</span>
+        </button>
+    </div>
+
+    <!-- Adjusted class attribute for accountList -->
+    <div id="accountList" class="bg-stone-200 flex-1 overflow-auto p-2 rounded-xl">
+        <ul class="h-full">
+            {% for account in page_data.accounts %}
+            <li>
+                {{ account}}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
