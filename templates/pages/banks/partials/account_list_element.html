@@ -1,6 +1,6 @@
 <li class="mb-1" id="account-{{account.id}}">
     <div class="flex justify-between">
-        <span>{{ account.name }}</span>
+        <span>{{ account.name }} {{account.id}}</span>
         <button hx-delete="/delete_account/{{ account.id }}" hx-trigger="click">
             <img src="/static/icons/trash.svg" alt="trash" class="w-4 h-4"/>
         </button>
