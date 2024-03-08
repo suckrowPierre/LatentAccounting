@@ -1,6 +1,6 @@
 from fastapi import Request
 from viewmodels.base_view_model import BaseViewModel
-import app.database as db
+import app.account_database as db
 
 
 class AccountsViewModel(BaseViewModel):
@@ -18,7 +18,19 @@ class AccountsViewModel(BaseViewModel):
         self.accounts = db.get_accounts()
         return update
 
+    def add_account(self, name, account_number):
+        db_id = db.add_account(name, account_number)
+        self.accounts = db.get_accounts()
+        return db_id
+
     def delete_account(self, account_id):
         delete = db.delete_account(account_id)
         self.accounts = db.get_accounts()
         return delete
+
+    def get_accounts(self):
+        self.accounts = db.get_accounts()
+        return self.accounts
+
+    def get_account(self, account_id):
+        return db.get_account(account_id)

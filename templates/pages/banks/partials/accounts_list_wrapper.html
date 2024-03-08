@@ -9,7 +9,7 @@
 
     <!-- Adjusted class attribute for accountList -->
     <div id="accountList" class="bg-stone-200 flex-1 overflow-auto p-2 rounded-xl">
-        <ul class="h-full" hx-confirm="Are you sure?" hx-target="closest li" hx-swap="outerHTML swap:1s">
+        <ul class="h-full">
             {% for account in page_data.accounts %}
                 {% include 'pages/banks/partials/account_list_element.html' %}
             {% endfor %}

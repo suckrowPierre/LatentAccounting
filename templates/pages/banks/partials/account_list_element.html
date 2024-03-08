@@ -1,7 +1,9 @@
 <li class="mb-1" id="account-{{account.id}}">
     <div class="flex justify-between">
-        <span>{{ account.name }} {{account.id}}</span>
-        <button hx-delete="/delete_account/{{ account.id }}" hx-trigger="click">
+        <button hx-get="/account_settings/{{ account.id }}" hx-trigger="click" hx-target="#account-settings-wrapper" class="w-full text-left	">
+            <span>{{ account.name }}</span>
+        </button>
+        <button hx-delete="/delete_account/{{ account.id }}" hx-trigger="click" hx-confirm="Are you sure?" hx-target="closest li" hx-swap="outerHTML swap:1s">
             <img src="/static/icons/trash.svg" alt="trash" class="w-4 h-4"/>
         </button>
     </div>

@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends, HTTPException, Form
+from typing import Optional
 from fastapi.responses import Response, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -6,7 +7,7 @@ from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 from viewmodels.accounts.accounts_view_model import AccountsViewModel
 from pydantic import BaseModel
 import json
-import app.database as db
+import app.account_database as db
 
 app = FastAPI()
 
@@ -37,7 +38,7 @@ def find_page(page_name: str):
 
 @app.get("/accounts")
 async def get_accounts(request: Request):
-    return AccountsViewModel(request).accounts
+    return AccountsViewModel(request).get_accounts()
 
 @app.post("/new_account")
 async def new_account(request: Request):
@@ -48,6 +49,24 @@ async def new_account(request: Request):
         return templates.TemplateResponse("pages/banks/partials/account_list_element.html", {"request": request, "account": {"name": name, "id": db_id}})
     else:
         return {"status": "success", "id": db_id, "name": name}
+
+@app.patch("/update_account/{id}")
+async def update_account(request: Request, id: int, name: str = Form(...), account_number: Optional[str] = Form(None), csv_seperator: str = None, csv_file: str = None):
+    print("update_account" + str(id) + " " + name)
+    if AccountsViewModel(request).update_account(id, name, account_number):
+        if request.headers.get('HX-Request') == 'true':
+            return templates.TemplateResponse("pages/banks/partials/account_list_element.html",
+                                              {"request": request, "account": {"name": name, "id": id}})
+            return Response(content='', status_code=200)
+        else:
+            return {"status": "success"}
+
+@app.get("/account_settings/{id}")
+async def account_settings(request: Request, id: int):
+    print("account_settings")
+    account = AccountsViewModel(request).get_account(id)
+    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account})
+
 @app.delete("/delete_account/{id}")
 async def delete_account(request: Request, id: int):
     if AccountsViewModel(request).delete_account(id):

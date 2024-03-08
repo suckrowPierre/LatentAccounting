@@ -77,6 +77,13 @@ def get_accounts():
         cursor.execute("SELECT * FROM bank_accounts")
         return cursor.fetchall()
 
+def get_account(account_id):
+    """Retrieve a single account from the database."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM bank_accounts WHERE id = ?", (account_id,))
+        return cursor.fetchone()
+
 # Run the startup event to ensure DB and table creation
 def startup_event():
     ensure_db_directory()

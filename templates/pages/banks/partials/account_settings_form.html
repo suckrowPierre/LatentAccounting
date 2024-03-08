@@ -1,0 +1,24 @@
+<form class="m-8 relative" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML">
+        <div class="form-group">
+            <label for="account-name">Account Name</label>
+            <input type="text" class="form-control" id="account-name" name="name" value="{{account.name}}">
+        </div>
+        <div class="form-group">
+            <label for="account-number">Account Number</label>
+            <input type="text" class="form-control" id="account-number" name="account_number" placeholder="Account Number" value="{{account.account_number}}">
+        </div>
+        <div class="form-group">
+            <label for="csv-seperator">CSV Seperator</label>
+            <input type="text" class="form-control" id="csv-seperator" name="csv_seperator" placeholder="CSV seperator" value="">
+        </div>
+                <div class="form-group">
+            <label for="csv-columns">CSV Columns</label>
+            <input type="text" class="form-control" id="csv-columns" name="csv_columns" placeholder="date description amount ..." value="">
+        </div>
+        <div class="form-group mt-20">
+            <label for="csv-file">CSV File</label>
+            <input type="file" class="form-control" id="csv-file" name="csv_file" placeholder="CSV file" value="">
+        </div>
+        <button type="submit" class="btn btn-primary absolute top-0 right-0">Save</button>
+    </form>
+    </div>
