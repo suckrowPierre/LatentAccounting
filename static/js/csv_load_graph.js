@@ -1,10 +1,11 @@
-var id = document.getElementById("drawflow");
-    const editor = new Drawflow(id);
-    editor.start();
+function load_flowchart() {
+    var id = document.getElementById("drawflow");
+const editor = new Drawflow(id);
+editor.start();
 
     // Add two nodes
-    var htmlNode1 = `
-      <div style="border: 1px solid #000; padding: 10px;">
+var htmlNode1 = `
+<div style="border: 1px solid #000; padding: 10px;">
         <p>Node 1 Content</p>
       </div>
     `;
@@ -20,4 +21,5 @@ var id = document.getElementById("drawflow");
     editor.addNode('node2', 1, 0, 300, 100, 'example', data2, htmlNode2);
 
     // Allow connection between nodes
-    editor.addConnection('node1_output_1', 'node2_input_1', 'output_1', 'input_1');
+    //editor.addConnection('node1_output_1', 'node2_input_1', 'output_1', 'input_1');
+}
