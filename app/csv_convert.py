@@ -1,1 +1,1 @@
-data_columns = ["booking_date", "value_date", "description", "amount"]
+data_columns = ["booking_date", "value_date", "description", "amount", "currency"]

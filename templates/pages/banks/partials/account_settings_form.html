@@ -23,9 +23,31 @@
     </div>
         <button type="submit" class="btn btn-primary absolute top-0 right-0 underline hover:no-underline">Save</button>
 </form>
-{{conversion_format}}
-<div id="drawflow" class="h-full mt-8 border-2 border-black rounded-xl">
+<div class="flex flex-row mt-8 border-2 border-black rounded-xl text-sm h-full">
+    <ul class="w-60 h-full flex flex-col p-4">
+        <li class="p-2 hover:cursor-move" draggable="true">
+            <span>
+                toDate (d.m.y)
+            </span>
+        </li>
+        <li class="p-2 hover:cursor-move" draggable="true">
+            <span>
+                constant
+            </span>
+        </li>
+        <li class="p-2 hover:cursor-move" draggable="true">
+            <span>
+                string concat
+            </span>
+        </li>
+
+    </ul>
+    <div id="drawflow" class="w-full h-full border-l-2 border-black">
+    </div>
 </div>
+
 <script>
-    load_flowchart({{conversion_format | safe }});
+
+    set_output_columns({{conversion_format | safe }});
+    load_editor_state();
 </script>
