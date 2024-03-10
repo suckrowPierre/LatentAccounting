@@ -8,6 +8,8 @@ from viewmodels.accounts.accounts_view_model import AccountsViewModel
 from pydantic import BaseModel
 import json
 import app.account_database as db
+import app.csv_convert as CSVconvert
+import json
 
 app = FastAPI()
 
@@ -65,7 +67,7 @@ async def update_account(request: Request, id: int, name: str = Form(...), accou
 async def account_settings(request: Request, id: int):
     print("account_settings")
     account = AccountsViewModel(request).get_account(id)
-    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account})
+    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "conversion_format": json.dumps(CSVconvert.data_columns)})
 
 @app.delete("/delete_account/{id}")
 async def delete_account(request: Request, id: int):

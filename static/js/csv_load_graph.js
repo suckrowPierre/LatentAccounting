@@ -1,25 +1,42 @@
-function load_flowchart() {
-    var id = document.getElementById("drawflow");
-const editor = new Drawflow(id);
-editor.start();
+var editor = null;
 
-    // Add two nodes
-var htmlNode1 = `
-<div style="border: 1px solid #000; padding: 10px;">
-        <p>Node 1 Content</p>
-      </div>
-    `;
-    var data1 = { "name": 'Node 1' };
-    editor.addNode('node1', 0, 1, 100, 100, 'example', data1, htmlNode1);
+function load_flowchart(output_columns) {
+    console.log(output_columns)
+    const id = document.getElementById("drawflow");
+    editor = new Drawflow(id);
+    editor.start();
 
-    var htmlNode2 = `
-      <div style="border: 1px solid #000; padding: 10px;">
-        <p>Node 2 Content</p>
-      </div>
-    `;
-    var data2 = { "name": 'Node 2' };
-    editor.addNode('node2', 1, 0, 300, 100, 'example', data2, htmlNode2);
+    editor.zoom_max = 1.6;
+    editor.zoom_min = 0.5;
+    editor.zoom_value = 0.1;
+    editor.editor_mode = 'edit';
 
-    // Allow connection between nodes
-    //editor.addConnection('node1_output_1', 'node2_input_1', 'output_1', 'input_1');
+
+
+
+    //get csv columns and create nodes for each column
+    const csv_separator = document.getElementById("csv-seperator").value;
+    const csv_columns = document.getElementById("csv-columns").value.split(csv_separator);
+
+    for (let i = 0; i < csv_columns.length; i++) {
+        const htmlNode = `
+        <div class="text-sm">
+            <p>${csv_columns[i]}</p>
+        </div>
+        `;
+        const data = { "name": csv_columns[i] };
+        editor.addNode(`node_${csv_columns[i]}`, 0, 1, 100, i*40+50, 'example', data, htmlNode);
+    }
+
+    //create output nodes
+    for ( let i = 0; i < output_columns.length; i++) {
+        const htmlNode = `
+        <div class="text-sm">
+            <p>${output_columns[i]}</p>
+        </div>
+        `;
+        const data = { "name": output_columns[i] };
+        editor.addNode(`output_node_${output_columns[i]}`, 1, 0, 500, i*40+50, 'output', data, htmlNode);
+    }
+
 }
