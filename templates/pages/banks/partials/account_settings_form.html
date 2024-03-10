@@ -1,24 +1,26 @@
-<form class="relative" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML">
-        <div class="form-group">
-            <label for="account-name">Account Name</label>
-            <input type="text" class="form-control" id="account-name" name="name" value="{{account.name}}">
+<form class="relative w-full" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML">
+    <div class="w-[80%]">
+         <div class="form-group flex flex-row">
+            <label for="csv-columns" class="w-40">Account Name</label>
+            <input type="text" class="form-control w-[70%]" id="account-name" name="name" value="{{account.name}}">
         </div>
-        <div class="form-group">
-            <label for="account-number">Account Number</label>
-            <input type="text" class="form-control" id="account-number" name="account_number" placeholder="Account Number" value="{{account.account_number}}">
+         <div class="form-group flex flex-row">
+            <label for="csv-columns" class="w-40">Account Number</label>
+            <input type="text" class="form-control w-[70%]" id="account-number" name="account_number" placeholder="Account Number" value="{{account.account_number}}">
         </div>
-        <div class="form-group">
-            <label for="csv-seperator">CSV Seperator</label>
-            <input type="text" class="form-control" id="csv-seperator" name="csv_seperator" placeholder="CSV seperator" value="">
+         <div class="form-group flex flex-row">
+            <label for="csv-columns" class="w-40">CSV Seperator</label>
+            <input type="text" class="form-control" id="csv-seperator" name="csv_seperator" placeholder="CSV seperator" value="{{account.csv_seperator}}">
         </div>
-                <div class="form-group">
-            <label for="csv-columns">CSV Columns</label>
-            <input type="text" class="form-control" id="csv-columns" name="csv_columns" placeholder="date description amount ..." value="">
+                <div class="form-group flex flex-row">
+            <label for="csv-columns" class="w-40">CSV Columns</label>
+            <input type="text" class="form-control w-[70%]" id="csv-columns" name="csv_columns" placeholder="date;description;amount;..." value="{{account.csv_columns}}">
         </div>
         <div class="form-group mt-8">
             <label for="csv-file">CSV File</label>
             <input type="file" class="form-control" id="csv-file" name="csv_file" placeholder="CSV file" value="">
         </div>
+    </div>
         <button type="submit" class="btn btn-primary absolute top-0 right-0 underline hover:no-underline">Save</button>
 </form>
 <div id="drawflow" class="h-full bg-red-200 mt-8" >
