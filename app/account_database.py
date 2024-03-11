@@ -34,25 +34,26 @@ def create_db():
                 last_data_update TEXT,
                 csv_seperator TEXT,
                 csv_columns TEXT,
-                csv_file_path TEXT
+                csv_file_path TEXT,
+                flowchart_diagram TEXT
             )
         """)
         conn.commit()
         print(f"Database directory created: {DB_PATH}")
 
-def add_account(name, account_number=None, last_data_update=None, csv_seperator=None, csv_columns=None, csv_file_path=None):
+def add_account(name, account_number=None, last_data_update=None, csv_seperator=None, csv_columns=None, csv_file_path=None, flowchart_diagram=None):
     """Add a new account to the database."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(""" 
-        INSERT INTO bank_accounts (name, account_number, last_data_update, csv_seperator, csv_columns, csv_file_path) VALUES (?, ?, ?, ?, ?, ?)""",
-                       (name, account_number, last_data_update, csv_seperator, csv_columns, csv_file_path))
+        INSERT INTO bank_accounts (name, account_number, last_data_update, csv_seperator, csv_columns, csv_file_path, flowchart_diagram) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                       (name, account_number, last_data_update, csv_seperator, csv_columns, csv_file_path, flowchart_diagram))
         # Get the ID of the newly inserted row
         account_id = cursor.lastrowid
         conn.commit()
         return account_id
 
-def update_account(account_id, name=None, account_number=None, csv_seperator=None, csv_columns=None, csv_file_path=None, last_data_update=None):
+def update_account(account_id, name=None, account_number=None, csv_seperator=None, csv_columns=None, csv_file_path=None, flowchart_diagram=None):
     """Update an existing account."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -60,12 +61,12 @@ def update_account(account_id, name=None, account_number=None, csv_seperator=Non
             UPDATE bank_accounts
             SET name = COALESCE(?, name),
                 account_number = COALESCE(?, account_number),
-                last_data_update = COALESCE(?, last_data_update),
                 csv_seperator = COALESCE(?, csv_seperator),
                 csv_columns = COALESCE(?, csv_columns),
-                csv_file_path = COALESCE(?, csv_file_path)
+                csv_file_path = COALESCE(?, csv_file_path),
+                flowchart_diagram = COALESCE(?, flowchart_diagram)
             WHERE id = ?
-        """, (name, account_number, account_id, csv_seperator, csv_columns, csv_file_path, account_id))
+        """, (name, account_number, csv_seperator, csv_columns, csv_file_path, flowchart_diagram, account_id))
         conn.commit()
         return True
 

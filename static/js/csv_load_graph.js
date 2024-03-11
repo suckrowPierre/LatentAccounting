@@ -9,15 +9,24 @@ function set_output_columns(columns) {
     output_columns = columns;
 }
 
-function load_editor_state(state = null) {
+function load_editor_state(stateString = null) {
+    console.log("loading editor state");
+    console.log(stateString);
     editor = null;
-    if (editor == null) {
-        start_editor();
-    } else {
-        import_editor_state(state);
+    start_editor();
+    if (editor && (stateString !== null)){
+        import_editor_state(stateString);
     }
     compareInputCSVToEditorNodesAndCreate();
+    compareOutputCSVToEditorNodesAndCreate();
+    setupDragAndDrop()
+
+    const csvSeparatorInput = document.getElementById('csv-seperator');
+    const csvColumnsInput = document.getElementById('csv-columns');
+    csvSeparatorInput.addEventListener('change', compareInputCSVToEditorNodesAndCreate);
+    csvColumnsInput.addEventListener('change', compareInputCSVToEditorNodesAndCreate);
 }
+
 
 function start_editor() {
     const id = document.getElementById("drawflow");
@@ -57,21 +66,19 @@ function createNode(name, x, y, type, inputs, outputs) {
 function compareInputCSVToEditorNodesAndCreate() {
     const csv_separator = document.getElementById("csv-seperator").value;
     const csv_columns = document.getElementById("csv-columns").value.split(csv_separator);
-    console.log(csv_columns);
 
     const inputNodes = getNodesFromClass('input');
     var copyInputNodes = inputNodes.slice();
 
-    // create boolean array of same length as inputNodes
-    let createdNodes = new Array(inputNodes.length).fill(false);
+    console.log(csv_columns.length)
+    console.log(csv_columns)
     for (let i = 0; i < csv_columns.length; i++) {
-        // ceck if csv column is already in inputNodes
-        console.log("checking for " + csv_columns[i]);
-        if (inputNodes === [] || !findNodeByName(inputNodes, "input" + csv_columns[i]) ) {
-            console.log("creating node");
-            createNode(csv_columns[i], 0, i*40+20, 'input', 0, 1);
-        } else if (inputNodes !== [] && findNodeByName(inputNodes, "input" + csv_columns[i])) {
-            copyInputNodes = removeNodeByName(copyInputNodes, "input" + csv_columns[i]);
+        if (csv_columns[i] !== "") {
+            if (inputNodes === [] || !findNodeByName(inputNodes, "input" + csv_columns[i])) {
+                createNode(csv_columns[i], 0, i * 40 + 20, 'input', 0, 1);
+            } else if (inputNodes !== [] && findNodeByName(inputNodes, "input" + csv_columns[i])) {
+                copyInputNodes = removeNodeByName(copyInputNodes, "input" + csv_columns[i]);
+            }
         }
     }
 
@@ -79,56 +86,28 @@ function compareInputCSVToEditorNodesAndCreate() {
             editor.removeNodeId("node-" + copyInputNodes[i].id);
     }
 
-
-
 }
 
-function import_editor_state(state) {
+function compareOutputCSVToEditorNodesAndCreate() {
+    const outputNodes = getNodesFromClass('output');
+    var copyOutputNodes = outputNodes.slice();
+
+    for (let i = 0; i < output_columns.length; i++) {
+        if (outputNodes === [] || !findNodeByName(outputNodes, "output" + output_columns[i]) ) {
+            createNode(output_columns[i], 650, i*40+20, 'output', 1, 0);
+        } else if (outputNodes !== [] && findNodeByName(outputNodes, "output" + output_columns[i])) {
+            copyOutputNodes = removeNodeByName(copyOutputNodes, "output" + output_columns[i]);
+        }
+    }
+    for (let i = 0; i < copyOutputNodes.length; i++) {
+            editor.removeNodeId("node-" + copyOutputNodes[i].id);
+    }
+}
+
+function import_editor_state(stateString) {
+    const state = JSON.parse(stateString);
+    console.log("importing state");
     editor.import(state);
-
-}
-
-function load_flowchart() {
-    const id = document.getElementById("drawflow");
-    editor = new Drawflow(id);
-
-
-    editor.zoom_max = 1.6;
-    editor.zoom_min = 0.5;
-    editor.zoom_value = 0.1;
-    editor.editor_mode = 'edit';
-    editor.start();
-
-
-
-
-    //get csv columns and create nodes for each column
-    const csv_separator = document.getElementById("csv-seperator").value;
-    const csv_columns = document.getElementById("csv-columns").value.split(csv_separator);
-
-    for (let i = 0; i < csv_columns.length; i++) {
-        const htmlNode = `
-        <div class="text-sm">
-            <p>${csv_columns[i]}</p>
-        </div>
-        `;
-        const data = { "name": csv_columns[i] };
-        editor.addNode(`input_node_${csv_columns[i]}`, 0, 1, 50, i*40+20, 'input', data, htmlNode);
-    }
-
-    //create output nodes
-    for ( let i = 0; i < output_columns.length; i++) {
-        const htmlNode = `
-        <div class="text-sm">
-            <p>${output_columns[i]}</p>
-        </div>
-        `;
-        const data = { "name": output_columns[i] };
-        editor.addNode(`output_node_${output_columns[i]}`, 1, 0, 650, i*40+20, 'output', data, htmlNode);
-    }
-
-    setupDragAndDrop()
-
 }
 
 function setupDragAndDrop() {

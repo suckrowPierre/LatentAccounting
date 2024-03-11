@@ -53,9 +53,10 @@ async def new_account(request: Request):
         return {"status": "success", "id": db_id, "name": name}
 
 @app.patch("/update_account/{id}")
-async def update_account(request: Request, id: int, name: str = Form(...), account_number: Optional[str] = Form(None), csv_seperator: str = Form(None), csv_columns: str = Form(None), csv_file: str = Form(None)):
+async def update_account(request: Request, id: int, name: str = Form(...), account_number: Optional[str] = Form(None), csv_seperator: str = Form(None), csv_columns: str = Form(None), csv_file: str = Form(None), flowchart_diagram: str = Form(None)):
+    print(flowchart_diagram)
     print("update_account" + str(id) + " " + name)
-    if AccountsViewModel(request).update_account(id, name, account_number, csv_seperator, csv_columns, csv_file_path=None):
+    if AccountsViewModel(request).update_account(id, name, account_number, csv_seperator, csv_columns, csv_file_path=None, flowchart_diagram=flowchart_diagram):
         if request.headers.get('HX-Request') == 'true':
             return templates.TemplateResponse("pages/banks/partials/account_list_element.html",
                                               {"request": request, "account": {"name": name, "id": id}})
@@ -67,6 +68,7 @@ async def update_account(request: Request, id: int, name: str = Form(...), accou
 async def account_settings(request: Request, id: int):
     print("account_settings")
     account = AccountsViewModel(request).get_account(id)
+    print(account["flowchart_diagram"])
     return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "conversion_format": json.dumps(CSVconvert.data_columns)})
 
 @app.delete("/delete_account/{id}")
