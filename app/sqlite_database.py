@@ -38,6 +38,14 @@ def create_db():
                 flowchart_diagram TEXT
             )
         """)
+        cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS settings (
+                        id INTEGER PRIMARY KEY CHECK (id = 1),
+                        currency TEXT,
+                        api_key TEXT,
+                        gpt_api_model TEXT
+                    )
+                """)
         conn.commit()
         print(f"Database directory created: {DB_PATH}")
 
@@ -90,6 +98,27 @@ def get_account(account_id):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM bank_accounts WHERE id = ?", (account_id,))
+        return cursor.fetchone()
+
+def update_or_insert_settings(currency, api_key, gpt_api_model):
+    """Update or insert the single settings entry."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO settings (id, currency, api_key, gpt_api_model)
+            VALUES (1, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                currency = excluded.currency,
+                api_key = excluded.api_key,
+                gpt_api_model = excluded.gpt_api_model
+        """, (currency, api_key, gpt_api_model))
+        conn.commit()
+
+def get_settings():
+    """Retrieve the settings from the database."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM settings WHERE id = 1")
         return cursor.fetchone()
 
 # Run the startup event to ensure DB and table creation

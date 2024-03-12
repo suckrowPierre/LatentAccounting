@@ -1,0 +1,17 @@
+<form id="settings" class="relative w-full" hx-put="/settings" hx-target="#settings" hx-swap="outerHTML">
+    <div class="w-[80%]">
+         <div class="form-group flex flex-row">
+            <label for="currency" class="w-40">Currency</label>
+            <input type="text" class="form-control w-[70%]" id="currency" name="currency" placeholder="EUR" value="{{settings.currency}}" required>
+        </div>
+         <div class="form-group flex flex-row">
+            <label for="api-key" class="w-40">API key</label>
+            <input type="text" class="form-control w-[70%]" id="api-key" name="api_key" placeholder="API key" value="{{settings.api_key}}" required>
+        </div>
+         <div class="form-group flex flex-row">
+            <label for="gpt-api-model" class="w-40">GPT Model</label>
+            <input type="text" class="form-control w-[70%]" id="gpt-api-model" name="gpt_api_model" placeholder="GPT Model" value="{{settings.gpt_api_model}}" required>
+        </div>
+    </div>
+        <button type="submit" class="btn btn-primary absolute top-0 right-0 underline hover:no-underline">Save</button>
+</form>

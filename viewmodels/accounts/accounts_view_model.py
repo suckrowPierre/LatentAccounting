@@ -1,6 +1,6 @@
 from fastapi import Request
 from viewmodels.base_view_model import BaseViewModel
-import app.account_database as db
+import app.sqlite_database as db
 
 
 class AccountsViewModel(BaseViewModel):

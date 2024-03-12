@@ -1,15 +1,15 @@
 <form class="relative w-full" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML" hx-vals='js:{flowchart_diagram: getEditorState()}'>
     <div class="w-[80%]">
          <div class="form-group flex flex-row">
-            <label for="csv-columns" class="w-40">Account Name</label>
+            <label for="account-name" class="w-40">Account Name</label>
             <input type="text" class="form-control w-[70%]" id="account-name" name="name" value="{{account.name}}">
         </div>
          <div class="form-group flex flex-row">
-            <label for="csv-columns" class="w-40">Account Number</label>
+            <label for="account-number" class="w-40">Account Number</label>
             <input type="text" class="form-control w-[70%]" id="account-number" name="account_number" placeholder="Account Number" value="{{account.account_number}}">
         </div>
          <div class="form-group flex flex-row">
-            <label for="csv-columns" class="w-40">CSV Seperator</label>
+            <label for="csv-seperator" class="w-40">CSV Seperator</label>
             <input type="text" class="form-control" id="csv-seperator" name="csv_seperator" placeholder="CSV seperator" value="{{account.csv_seperator}}">
         </div>
                 <div class="form-group flex flex-row">

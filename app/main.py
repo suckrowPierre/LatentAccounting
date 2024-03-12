@@ -5,17 +5,21 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 from viewmodels.accounts.accounts_view_model import AccountsViewModel
+from viewmodels.settings.settings_view_model import SettingsViewModel
 from pydantic import BaseModel
 import json
-import app.account_database as db
+
+import app.sqlite_database as db
 import app.csv_convert as CSVconvert
-import json
+import app.csv_file_manger as csv_file_manger
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 db.startup_event()
+csv_file_manger.check_and_create_file_dir()
+
 
 try:
     with open("./data/app_data.json", "r") as data_file:
@@ -28,7 +32,7 @@ pages = [
     {"title": "Dashboard", "route": "/", "template": "pages/dashboard.html"},
     {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history.html"},
     {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks/banks.html", "viewModel": AccountsViewModel},
-    {"title": "Settings", "route": "/settings", "template": "pages/settings.html"},
+    {"title": "Settings", "route": "/settings", "template": "pages/settings/settings.html", "viewModel": SettingsViewModel},
 ]
 
 async def page_metadata(request: Request) -> PageMetadataViewModel:
@@ -47,6 +51,7 @@ async def new_account(request: Request):
     name = "New Account"
     account_number = None
     db_id = AccountsViewModel(request).add_account(name, account_number)
+    csv_file_manger.create_sub_folder_bank_account(db_id)
     if request.headers.get('HX-Request') == 'true':
         return templates.TemplateResponse("pages/banks/partials/account_list_element.html", {"request": request, "account": {"name": name, "id": db_id}})
     else:
@@ -63,6 +68,13 @@ async def update_account(request: Request, id: int, name: str = Form(...), accou
             return Response(content='', status_code=200)
         else:
             return {"status": "success"}
+@app.put("/settings")
+async def update_settings(request: Request, currency: str = Form(...), api_key: str = Form(...), gpt_api_model: str = Form(...)):
+    settings = SettingsViewModel(request).upsert_settings(currency, api_key, gpt_api_model)
+    if request.headers.get('HX-Request') == 'true':
+        return templates.TemplateResponse("pages/settings/partials/settings_form.html", {"request": request, "settings": settings})
+    return {"status": "success"}
+
 
 @app.get("/account_settings/{id}")
 async def account_settings(request: Request, id: int):
@@ -74,6 +86,7 @@ async def account_settings(request: Request, id: int):
 @app.delete("/delete_account/{id}")
 async def delete_account(request: Request, id: int):
     if AccountsViewModel(request).delete_account(id):
+        csv_file_manger.delete_sub_folder_bank_account(id)
         if request.headers.get('HX-Request') == 'true':
             return Response(content='', status_code=200)
         else:
