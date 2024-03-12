@@ -1,4 +1,4 @@
-<form class="relative w-full" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML" hx-vals='js:{flowchart_diagram: getEditorState()}'>
+<form class="relative w-full" hx-patch="/update_account/{{account.id}}" hx-target="#account-{{account.id}}" hx-swap="outerHTML" hx-vals='js:{flowchart_diagram: getEditorState()}' enctype="multipart/form-data">
     <div class="w-[80%]">
          <div class="form-group flex flex-row">
             <label for="account-name" class="w-40">Account Name</label>
@@ -16,9 +16,46 @@
             <label for="csv-columns" class="w-40">CSV Columns</label>
             <input type="text" class="form-control w-[70%]" id="csv-columns" name="csv_columns" placeholder="date;description;amount;..." value="{{account.csv_columns}}">
         </div>
-        <div class="form-group mt-8">
-            <label for="csv-file">CSV File</label>
-            <input type="file" class="form-control" id="csv-file" name="csv_file" placeholder="CSV file" value="">
+        <div class="form-group flex flex-row">
+            <span class="w-40">CSV File</span>
+            <div><span id="file-name">{{account.csv_file_name}}</span>
+                <script>
+                    function dragOverHandler(ev) {
+                        ev.preventDefault();
+                    }
+                    function dropHandler(ev) {
+                        ev.preventDefault();
+
+                        if (ev.dataTransfer.items) {
+                            if (ev.dataTransfer.items[0].kind === 'file') {
+                                var file = ev.dataTransfer.items[0].getAsFile();
+
+                                //check if file is csv
+                                if (file.name.split('.').pop() !== 'csv') {
+                                    alert('Please upload a csv file');
+                                    return;
+                                }
+
+                                console.log("File name: " + file.name);
+
+
+                                var dataTransfer = new DataTransfer();
+                                dataTransfer.items.add(file);
+
+                                document.getElementById('csv-file').files = dataTransfer.files;
+                                document.getElementById('file-name').textContent = file.name;
+                            }
+                        }
+                    }
+                </script>
+                <label for="csv-file"
+                       ondrop="dropHandler(event);"
+                       ondragover="dragOverHandler(event);"
+                       class="absolute bottom-[-10px] right-0 flex flex-col items-center justify-center border-2 border-black rounded-xl p-2 text-center	text-gray-400 hover:text-black cursor-pointer">
+                    <p class="text-sm"><span class="font-semibold">Click to upload</span><br> or drag and drop svg</p>
+                <input type="file" accept=".csv" class="hidden" id="csv-file" name="csv_file" placeholder="CSV file" value="">
+                </label>
+            </div>
         </div>
     </div>
         <button type="submit" class="btn btn-primary absolute top-0 right-0 underline hover:no-underline">Save</button>

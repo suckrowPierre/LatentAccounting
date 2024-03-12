@@ -2,7 +2,7 @@ var editor = null;
 var output_columns = null;
 
 function getEditorState() {
-    return editor.export();
+    return JSON.stringify(editor.export());
 }
 
 function set_output_columns(columns) {
@@ -11,7 +11,6 @@ function set_output_columns(columns) {
 
 function load_editor_state(stateString = null) {
     console.log("loading editor state");
-    console.log(stateString);
     editor = null;
     start_editor();
     if (editor && (stateString !== null)){
@@ -105,6 +104,7 @@ function compareOutputCSVToEditorNodesAndCreate() {
 }
 
 function import_editor_state(stateString) {
+    console.log(stateString);
     const state = JSON.parse(stateString);
     console.log("importing state");
     editor.import(state);

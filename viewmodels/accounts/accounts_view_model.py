@@ -13,8 +13,8 @@ class AccountsViewModel(BaseViewModel):
         self.accounts = db.get_accounts()
         return db_id
 
-    def update_account(self, account_id, name, account_number, csv_seperator, csv_columns, csv_file_path, flowchart_diagram):
-        update = db.update_account(account_id, name, account_number, csv_seperator, csv_columns, csv_file_path, flowchart_diagram)
+    def update_account(self, account_id, name, account_number, csv_seperator, csv_columns, csv_file_name, flowchart_diagram):
+        update = db.update_account(account_id, name, account_number, csv_seperator, csv_columns, csv_file_name, flowchart_diagram)
         self.accounts = db.get_accounts()
         return update
 

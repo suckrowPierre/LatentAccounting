@@ -1,4 +1,5 @@
 import os
+import shutil
 
 parent_dir = "csv_files"
 
@@ -13,4 +14,9 @@ def create_sub_folder_bank_account(id):
 
 def delete_sub_folder_bank_account(id):
     if os.path.exists(f"{parent_dir}/{id}"):
-        os.rmdir(f"{parent_dir}/{id}")
+        shutil.rmtree(f"{parent_dir}/{id}", ignore_errors=False, onerror=None)
+
+async def save_csv_file(file, id):
+    with open(f"{parent_dir}/{id}/transactions.csv", 'wb') as f:
+        content = await file.read()
+        f.write(content)
