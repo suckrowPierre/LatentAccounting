@@ -1,5 +1,6 @@
 var editor = null;
 var output_columns = null;
+var draggableElements = null;
 
 function getEditorState() {
     return JSON.stringify(editor.export());
@@ -9,9 +10,11 @@ function set_output_columns(columns) {
     output_columns = columns;
 }
 
-function load_editor_state(stateString = null) {
+function load_editor_state(stateString = null, draggable_elements = null) {
     console.log("loading editor state");
     editor = null;
+    console.log(draggable_elements);
+    draggableElements = draggable_elements;
     start_editor();
     if (editor && (stateString !== null)){
         import_editor_state(stateString);
@@ -143,22 +146,14 @@ function createNodeAtPosition(type, x, y) {
     let inputs = 0;
     let outputs = 0;
 
-    switch(type) {
-        case 'toDate (d.m.y)':
-            nodeHTML = `<div><p>toDate (d.m.y)</p></div>`;
-            inputs = 1;
-            outputs = 1;
-            break;
-        case 'constant':
-            nodeHTML = `<div><p>Constant</p><input type="text" placeholder="Value"></div>`;
-            outputs = 1;
-            break;
-        case 'string concat':
-            nodeHTML = `<div><p>String Concat</p></div>`;
-            inputs = 2;
-            outputs = 1;
-            break;
-    }
+    draggableElements.forEach(element => {
+        if (element.name === type) {
+            console.log("match found" + element.name);
+            nodeHTML = element.nodeHTML;
+            inputs = element.inputs;
+            outputs = element.outputs;
+        }
+    });
 
     if(nodeHTML) {
         editor.addNode(type.toLowerCase().replace(/\s/g, '_'), inputs, outputs, x, y, type, {}, nodeHTML);

@@ -12,6 +12,7 @@ import json
 import app.sqlite_database as db
 import app.csv_convert as CSVconvert
 import app.csv_file_manger as csv_file_manger
+import app.flowchart as flowchart
 
 app = FastAPI()
 
@@ -84,7 +85,8 @@ async def update_settings(request: Request, currency: str = Form(...), api_key: 
 async def account_settings(request: Request, id: int):
     print("account_settings")
     account = AccountsViewModel(request).get_account(id)
-    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "conversion_format": json.dumps(CSVconvert.data_columns)})
+    draggable_elements = [element.to_js_dict() for element in flowchart.draggable_elements]
+    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "draggable_elements": draggable_elements,"conversion_format": json.dumps(CSVconvert.data_columns)})
 
 @app.delete("/delete_account/{id}")
 async def delete_account(request: Request, id: int):
