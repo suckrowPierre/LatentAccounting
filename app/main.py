@@ -7,12 +7,14 @@ from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 from viewmodels.accounts.accounts_view_model import AccountsViewModel
 from viewmodels.settings.settings_view_model import SettingsViewModel
 import json
+import os
 
 import app.sqlite_database as db
 import app.csv_loader.conversion_blueprint as conversion_blueprint
 import app.csv_loader.csv_file_manger as csv_file_manger
 import app.flowchart as flowchart
 import app.csv_loader.csv_convert as csv_convert
+import app.transaction_history.aggregate as aggregate
 
 app = FastAPI()
 
@@ -83,6 +85,16 @@ async def apply_flowchart(request: Request, id: int):
         await csv_file_manger.save_dict_to_csv_file(converted, id, "converted")
         return {"status": "success"}
 
+
+@app.post("/generate_transaction_history")
+async def generate_transaction_history(request: Request):
+    accounts = []
+    for account in AccountsViewModel(request).get_accounts():
+        # check if account csv dir has file converted.csv
+        if os.path.exists(f"csv_files/{account['id']}/converted.csv"):
+            pandas = await csv_file_manger.load_converted_csv_to_pandas(account["id"])
+            accounts.append(pandas)
+    aggregate.combine_and_filter_bank_accounts(accounts)
 
 
 @app.put("/settings")

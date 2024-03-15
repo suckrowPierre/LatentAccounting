@@ -1,8 +1,10 @@
 import os
 import csv
 import shutil
+import copy
 import pandas as pd
 import app.csv_loader.conversion_blueprint as cb
+from datetime import datetime
 
 parent_dir = "csv_files"
 
@@ -31,15 +33,24 @@ async def save_dict_to_csv_file(data, id, file_name):
         writer.writerows(data)
 
 def construct_dtypes_and_extract_dates():
-    dtypes = {column: "str" for column in cb.data_columns}
-    # pop any entry that has the word date in it
+    dates_copy = copy.deepcopy(cb.data_columns)
     dates = []
+    # pop any entry that has the word date in it
     for column in cb.data_columns:
         if "date" in column:
-            dates.append(dtypes.pop(column))
+            dates.append(column)
+            dates_copy.remove(column)
+    # construct dtypes from cb.data_columns, amount is float and the rest is string
+    dtypes = {column: "float" if column == "amount" else "str" for column in dates_copy}
+
+
     return dtypes, dates
 
 async def load_converted_csv_to_pandas(id):
     # construct dtypes from cb.data_columns, amount is float and the rest is string
     dtypes, dates = construct_dtypes_and_extract_dates()
-    return pd.read_csv(f"{parent_dir}/{id}/converted.csv", delimiter=";", dtype=dtypes, parse_dates=dates)
+    dateparse = lambda x: datetime.strptime(x, '%Y-%m-%d')
+    return pd.read_csv(f"{parent_dir}/{id}/converted.csv", delimiter=";", dtype=dtypes, parse_dates=dates, date_parser=dateparse)
+
+async def save_pandas_to_csv(data, id, file_name):
+    data.to_csv(f"{parent_dir}/{id}/{file_name}.csv", sep=";", index=False)

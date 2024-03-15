@@ -8,7 +8,8 @@ def string_to_int(string) -> int:
 
 
 def string_to_float(string) -> float:
-    return float(string.replace(",", "."))
+    vaLue = float(string.replace(",", "."))
+    return vaLue
 
 
 def string_date_to_date_d_m_y(string):

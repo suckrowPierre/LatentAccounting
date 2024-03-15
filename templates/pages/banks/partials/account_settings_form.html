@@ -63,6 +63,7 @@
                                 dataTransfer.items.add(file);
 
                                 document.getElementById('csv-file').files = dataTransfer.files;
+                                document.getElementById('file-name').textContent = file.name;
                             }
                         }
                     }

@@ -17,6 +17,8 @@ class ConversionBlueprint:
             "booking_date": self.booking_date,
             "value_date": self.value_date,
             "description": self.description,
-            "amount": lambda row: converters.convert_currency(self.amount(row), self.currency(row), self.target_currency, self.booking_date(row)),
+            "amount": lambda row: converters.convert_currency(converters.string_to_float(self.amount(row)),
+                                                              self.currency(row), self.target_currency,
+                                                              self.booking_date(row)),
             "currency": self.target_currency,
         }
