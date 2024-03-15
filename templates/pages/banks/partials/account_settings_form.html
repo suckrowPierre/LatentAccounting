@@ -20,6 +20,26 @@
             <span class="w-40">CSV File</span>
             <div><span id="file-name">{{account.csv_file_name}}</span>
                 <script>
+                    function updateApplyButtonState() {
+                        const fileNameSpan = document.getElementById('file-name');
+                        const applyButton = document.getElementById('apply-button');
+
+                        // Check if the file name is not "None"
+                        if (fileNameSpan.textContent.trim() !== "None") {
+                            console.log('File name is not None');
+                            // Enable the button and change its color and border to black
+                            applyButton.disabled = false;
+                            applyButton.style.color = 'black';
+                            applyButton.style.borderColor = 'black';
+                        } else {
+                            console.log('File name is None');
+                            // Disable the button and revert colors (if necessary)
+                            applyButton.disabled = true;
+                            applyButton.style.color = 'gray'; // Adjust if you have a specific gray color
+                            applyButton.style.borderColor = 'grey'; // Adjust if you have a specific gray color
+                        }
+                    }
+
                     function dragOverHandler(ev) {
                         ev.preventDefault();
                     }
@@ -43,10 +63,15 @@
                                 dataTransfer.items.add(file);
 
                                 document.getElementById('csv-file').files = dataTransfer.files;
-                                document.getElementById('file-name').textContent = file.name;
                             }
                         }
                     }
+                    document.getElementById('csv-file').addEventListener('change', function() {
+                        document.getElementById('file-name').textContent = this.files[0].name;
+                        updateApplyButtonState();
+                    });
+                    updateApplyButtonState();
+
                 </script>
                 <label for="csv-file"
                        ondrop="dropHandler(event);"
@@ -61,7 +86,8 @@
         <button type="submit" class="btn btn-primary absolute top-0 right-0 underline hover:no-underline">Save</button>
 </form>
 <div class="flex flex-row mt-8 border-2 border-black rounded-xl text-sm h-full">
-    <ul class="w-60 h-full flex flex-col p-4">
+    <div  class="w-60 h-full relative">
+        <ul class="flex flex-col p-4">
         {% for draggable_element in draggable_elements %}
             <li class="p-2 hover:cursor-move" draggable="true">
                 <span>
@@ -69,7 +95,24 @@
                 </span>
             </li>
         {% endfor %}
-    </ul>
+
+        </ul>
+
+        <script>
+    // Function to update the apply button's state based on the file name
+
+</script>
+
+
+        <div class="p-4 w-full absolute bottom-0 mb-4">
+            <button id="apply-button" class="w-full btn btn-secondary items-center justify-center border-2 border-grey rounded-xl p-2 text-center text-gray-400" disabled hx-post="/apply_flowchart/{{account.id}}" hx-target="this" hx-trigger="click" hx-swap="none">
+                <span>
+                Apply
+                </span>
+            </button>
+        </div>
+    </div>
+
     <div id="drawflow" class="w-full h-full border-l-2 border-black">
     </div>
 </div>

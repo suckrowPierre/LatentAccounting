@@ -61,8 +61,7 @@ function createNode(name, x, y, type, inputs, outputs) {
             <p>${name}</p>
         </div>
         `;
-    const data = { "name": name };
-    editor.addNode(type + name, inputs, outputs, x, y, type, data, htmlNode);
+    editor.addNode(name, inputs, outputs, x, y, type, {}, htmlNode);
 }
 
 function compareInputCSVToEditorNodesAndCreate() {
@@ -76,10 +75,10 @@ function compareInputCSVToEditorNodesAndCreate() {
     console.log(csv_columns)
     for (let i = 0; i < csv_columns.length; i++) {
         if (csv_columns[i] !== "") {
-            if (inputNodes === [] || !findNodeByName(inputNodes, "input" + csv_columns[i])) {
+            if (inputNodes === [] || !findNodeByName(inputNodes, csv_columns[i])) {
                 createNode(csv_columns[i], 0, i * 40 + 20, 'input', 0, 1);
-            } else if (inputNodes !== [] && findNodeByName(inputNodes, "input" + csv_columns[i])) {
-                copyInputNodes = removeNodeByName(copyInputNodes, "input" + csv_columns[i]);
+            } else if (inputNodes !== [] && findNodeByName(inputNodes, csv_columns[i])) {
+                copyInputNodes = removeNodeByName(copyInputNodes, csv_columns[i]);
             }
         }
     }
@@ -95,10 +94,10 @@ function compareOutputCSVToEditorNodesAndCreate() {
     var copyOutputNodes = outputNodes.slice();
 
     for (let i = 0; i < output_columns.length; i++) {
-        if (outputNodes === [] || !findNodeByName(outputNodes, "output" + output_columns[i]) ) {
+        if (outputNodes === [] || !findNodeByName(outputNodes, output_columns[i]) ) {
             createNode(output_columns[i], 650, i*40+20, 'output', 1, 0);
-        } else if (outputNodes !== [] && findNodeByName(outputNodes, "output" + output_columns[i])) {
-            copyOutputNodes = removeNodeByName(copyOutputNodes, "output" + output_columns[i]);
+        } else if (outputNodes !== [] && findNodeByName(outputNodes, output_columns[i])) {
+            copyOutputNodes = removeNodeByName(copyOutputNodes,  output_columns[i]);
         }
     }
     for (let i = 0; i < copyOutputNodes.length; i++) {
@@ -156,6 +155,6 @@ function createNodeAtPosition(type, x, y) {
     });
 
     if(nodeHTML) {
-        editor.addNode(type.toLowerCase().replace(/\s/g, '_'), inputs, outputs, x, y, type, {}, nodeHTML);
+        editor.addNode(type.toLowerCase().replace(/\s/g, '_'), inputs, outputs, x, y, "function", {}, nodeHTML);
     }
 }

@@ -1,18 +1,18 @@
-from fastapi import FastAPI, Request, Depends, HTTPException, Form, UploadFile, File
+from fastapi import FastAPI, Request, Depends, Form, UploadFile, File
 from typing import Optional
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 from viewmodels.accounts.accounts_view_model import AccountsViewModel
 from viewmodels.settings.settings_view_model import SettingsViewModel
-from pydantic import BaseModel
 import json
 
 import app.sqlite_database as db
-import app.csv_convert as CSVconvert
-import app.csv_file_manger as csv_file_manger
+import app.csv_loader.conversion_blueprint as conversion_blueprint
+import app.csv_loader.csv_file_manger as csv_file_manger
 import app.flowchart as flowchart
+import app.csv_loader.csv_convert as csv_convert
 
 app = FastAPI()
 
@@ -31,7 +31,7 @@ except IOError:
 
 pages = [
     {"title": "Dashboard", "route": "/", "template": "pages/dashboard.html"},
-    {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history.html"},
+    {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history/transaction_history.html"},
     {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks/banks.html", "viewModel": AccountsViewModel},
     {"title": "Settings", "route": "/settings", "template": "pages/settings/settings.html", "viewModel": SettingsViewModel},
 ]
@@ -73,6 +73,18 @@ async def update_account(request: Request, id: int, name: str = Form(...), accou
             return Response(content='', status_code=200)
         else:
             return {"status": "success"}
+
+@app.post("/apply_flowchart/{id}")
+async def apply_flowchart(request: Request, id: int):
+    flowchart_diagram = AccountsViewModel(request).get_account(id)["flowchart_diagram"]
+    if flowchart_diagram:
+        function_chain = flowchart.build_conversion_functions(flowchart_diagram)
+        converted = csv_convert.convert_csv(f"csv_files/{id}/transactions.csv", ";", function_chain)
+        await csv_file_manger.save_dict_to_csv_file(converted, id, "converted")
+        return {"status": "success"}
+
+
+
 @app.put("/settings")
 async def update_settings(request: Request, currency: str = Form(...), api_key: str = Form(...), gpt_api_model: str = Form(...)):
     settings = SettingsViewModel(request).upsert_settings(currency, api_key, gpt_api_model)
@@ -86,7 +98,7 @@ async def account_settings(request: Request, id: int):
     print("account_settings")
     account = AccountsViewModel(request).get_account(id)
     draggable_elements = [element.to_js_dict() for element in flowchart.draggable_elements]
-    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "draggable_elements": draggable_elements,"conversion_format": json.dumps(CSVconvert.data_columns)})
+    return templates.TemplateResponse("pages/banks/partials/account_settings_form.html", {"request": request, "account": account, "draggable_elements": draggable_elements,"conversion_format": json.dumps(conversion_blueprint.data_columns)})
 
 @app.delete("/delete_account/{id}")
 async def delete_account(request: Request, id: int):

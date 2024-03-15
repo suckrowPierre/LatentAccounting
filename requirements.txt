@@ -1,0 +1,7 @@
+fastapi
+pandas
+tabulate
+currencyconverter
+uvicorn
+Jinja2
+python-multipart
