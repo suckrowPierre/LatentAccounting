@@ -52,5 +52,8 @@ async def load_converted_csv_to_pandas(id):
     dateparse = lambda x: datetime.strptime(x, '%Y-%m-%d')
     return pd.read_csv(f"{parent_dir}/{id}/converted.csv", delimiter=";", dtype=dtypes, parse_dates=dates, date_parser=dateparse)
 
-async def save_pandas_to_csv(data, id, file_name):
-    data.to_csv(f"{parent_dir}/{id}/{file_name}.csv", sep=";", index=False)
+async def save_pandas_to_csv(data, path, file_name):
+    # check if path exists
+    if not os.path.exists(f"{parent_dir}/{path}"):
+        os.makedirs(f"{parent_dir}/{path}")
+    data.to_csv(f"{parent_dir}/{path}/{file_name}.csv", sep=";", index=False)

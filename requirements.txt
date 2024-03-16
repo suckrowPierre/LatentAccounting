@@ -5,3 +5,4 @@ currencyconverter
 uvicorn
 Jinja2
 python-multipart
+openai

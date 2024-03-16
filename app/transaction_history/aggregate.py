@@ -28,9 +28,6 @@ def identify_and_filter_transactions(combined_df):
                 combined_df.at[index, 'matched'] = True
                 combined_df.at[first_match_index, 'matched'] = True
 
-    #print matched transactions
-    print("matched")
-    print(combined_df[combined_df['matched']])
 
     # Filter out matched transactions
     filtered_df = combined_df[~combined_df['matched']].drop(columns=['inverse_amount', 'matched'])
@@ -40,5 +37,5 @@ def identify_and_filter_transactions(combined_df):
 def combine_and_filter_bank_accounts(accounts):
     combined_df = pd.concat(accounts, ignore_index=True)
     filtered_df = identify_and_filter_transactions(combined_df)
-    print(filtered_df)
+    return filtered_df
 
