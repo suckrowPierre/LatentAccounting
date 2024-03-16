@@ -17,6 +17,7 @@ import app.csv_loader.csv_convert as csv_convert
 import app.transaction_history.aggregate as aggregate
 import app.llm_enhancer.bank_gpt as b_gpt
 import app.llm_enhancer.enhancer as enhancer
+import app.vector_database.chroma as vector_db
 
 app = FastAPI()
 
@@ -95,12 +96,16 @@ async def generate_transaction_history(request: Request):
         # check if account csv dir has file converted.csv
         if os.path.exists(f"csv_files/{account['id']}/converted.csv"):
             pandas = await csv_file_manger.load_converted_csv_to_pandas(account["id"])
+            # add column for account_id
+            pandas["account_id"] = account["id"]
             accounts.append(pandas)
     aggregated = aggregate.combine_and_filter_bank_accounts(accounts)
     bank_gpt = b_gpt.ChatGPTBanking(api_key=db.get_settings()["api_key"], model=db.get_settings()["gpt_api_model"])
     enhanced = enhancer.extracting_process(bank_gpt, aggregated, 3)
-    print(enhanced)
+    print("enhanced data")
     await csv_file_manger.save_pandas_to_csv(enhanced, "transaction_history", "enhanced")
+    print("saved enhanced data")
+    #vector_db.load_dataframe(enhanced)
 
 
 

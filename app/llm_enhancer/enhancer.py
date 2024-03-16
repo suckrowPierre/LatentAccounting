@@ -24,7 +24,7 @@ def extracting_process(gpt_bank, pandas_df, max_number_of_fails):
             continue
         else:
             print(f"Enhanced description: {enhanced_description}")
-            pandas_df.at[index, "description"] = enhanced_description
+            pandas_df.at[index, "enhanced_description"] = enhanced_description
 
         categories = attempt_with_retries(
             gpt_bank.extract_categories,
