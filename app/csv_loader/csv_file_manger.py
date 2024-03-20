@@ -52,13 +52,13 @@ async def load_converted_csv_to_pandas(id):
     dateparse = lambda x: datetime.strptime(x, '%Y-%m-%d')
     return pd.read_csv(f"{parent_dir}/{id}/converted.csv", delimiter=";", dtype=dtypes, parse_dates=dates, date_parser=dateparse)
 
-async def load_transactions_csv_to_pandas(path):
+async def load_transactions_csv_to_pandas():
     dtypes, dates = construct_dtypes_and_extract_dates()
     dtypes["account_id"] = "int"
     dtypes["enhanced_description"] = "str"
     dtypes["categories"] = "str"
     dateparse = lambda x: datetime.strptime(x, '%Y-%m-%d')
-    return pd.read_csv(path, delimiter=";", dtype=dtypes, parse_dates=dates, date_parser=dateparse)
+    return pd.read_csv(f"{parent_dir}/transaction_history/enhanced.csv", delimiter=";", dtype=dtypes, parse_dates=dates, date_parser=dateparse)
 
 
 async def save_pandas_to_csv(data, path, file_name):

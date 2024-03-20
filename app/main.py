@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from viewmodels.metadata.metadata_view_model import PageMetadataViewModel
 from viewmodels.accounts.accounts_view_model import AccountsViewModel
 from viewmodels.settings.settings_view_model import SettingsViewModel
+from viewmodels.transaction_history.transaction_history_view_model import TransactionHistoryViewModel
 import json
 import os
 
@@ -17,7 +18,7 @@ import app.csv_loader.csv_convert as csv_convert
 import app.transaction_history.aggregate as aggregate
 import app.llm_enhancer.bank_gpt as b_gpt
 import app.llm_enhancer.enhancer as enhancer
-import app.vector_database.chroma as vector_db
+
 
 app = FastAPI()
 
@@ -91,6 +92,7 @@ async def apply_flowchart(request: Request, id: int):
 
 @app.post("/generate_transaction_history")
 async def generate_transaction_history(request: Request):
+    """
     accounts = []
     for account in AccountsViewModel(request).get_accounts():
         # check if account csv dir has file converted.csv
@@ -105,6 +107,10 @@ async def generate_transaction_history(request: Request):
     print("enhanced data")
     await csv_file_manger.save_pandas_to_csv(enhanced, "transaction_history", "enhanced")
     print("saved enhanced data")
+    """
+    df_enhanced = await csv_file_manger.load_transactions_csv_to_pandas()
+    TransactionHistoryViewModel(request).upsert_transaction_pd_df(df_enhanced)
+
     #vector_db.load_dataframe(enhanced)
 
 

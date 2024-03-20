@@ -6,4 +6,3 @@ uvicorn
 Jinja2
 python-multipart
 openai
-chromadb

@@ -1,6 +1,7 @@
 from pathlib import Path
 import sqlite3
 import contextlib
+import hashlib
 
 # Define the path to the database
 DB_PATH = Path("./db/accounts.db")
@@ -46,6 +47,21 @@ def create_db():
                         gpt_api_model TEXT
                     )
                 """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS transactions (
+                id TEXT PRIMARY KEY,
+                account_id INTEGER NOT NULL,
+                booking_date TEXT,
+                value_date TEXT,
+                description TEXT,
+                amount REAL,
+                currency TEXT,
+                enhanced_description TEXT,
+                categories TEXT,
+                embedding BLOB,
+                FOREIGN KEY (account_id) REFERENCES bank_accounts (id)
+            )
+        """)
         conn.commit()
         print(f"Database directory created: {DB_PATH}")
 
@@ -120,6 +136,52 @@ def get_settings():
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM settings WHERE id = 1")
         return cursor.fetchone()
+
+def generate_id(account_id, booking_date, amount, description):
+    unique_string = f"{account_id}{booking_date}{amount}{description}"
+    hash_object = hashlib.sha256(unique_string.encode())
+    hash_hex = hash_object.hexdigest()
+    return hash_hex
+def upsert_transaction(account_id, booking_date, value_date, description, amount, currency, enhanced_description=None, categories=None, embedding=None):
+    """Insert or update a transaction."""
+    id = generate_id(account_id, booking_date, amount, description)
+    # booking_date to string
+    booking_date = booking_date.strftime("%Y-%m-%d")
+    value_date = value_date.strftime("%Y-%m-%d")
+    account_id = int(account_id)
+    print(f"Upserting transaction: {id}")
+    print(booking_date)
+    print(value_date)
+    print(account_id)
+
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        # Use INSERT OR REPLACE to upsert. The uniqueness of the id ensures that
+        # existing entries are replaced (effectively updated), and new entries are inserted.
+        cursor.execute("""
+            INSERT OR REPLACE INTO transactions 
+            (id, account_id, booking_date, value_date, description, amount, currency, enhanced_description, categories, embedding)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (id, account_id, booking_date, value_date, description, amount, currency, enhanced_description, categories,
+              embedding))
+        conn.commit()
+
+def get_transaction_history():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM transactions")
+        return cursor.fetchall()
+
+
+
+
+
+
+
+
+
+
+
 
 # Run the startup event to ensure DB and table creation
 def startup_event():
