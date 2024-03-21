@@ -2,7 +2,7 @@ from pathlib import Path
 import sqlite3
 import contextlib
 import hashlib
-
+import pandas as pd
 # Define the path to the database
 DB_PATH = Path("./db/accounts.db")
 
@@ -102,7 +102,7 @@ def delete_account(account_id):
         conn.commit()
         return True
 
-def get_accounts():
+def get_accounts(search=None, min_date=None, max_date=None):
     """Retrieve all accounts from the database."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -166,14 +166,20 @@ def upsert_transaction(account_id, booking_date, value_date, description, amount
               embedding))
         conn.commit()
 
-def get_transaction_history():
+def get_transaction_history(search=None, min_date=None, max_date=None):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM transactions")
-        return cursor.fetchall()
-
-
-
+        transactions = cursor.fetchall()
+        df = pd.DataFrame(transactions, columns=[col[0] for col in cursor.description])
+        if search:
+            # TODO: makes this latent search
+            df = df[df['enhanced_description'].str.contains(search, case=False, na=False) | df['categories'].str.contains(search, case=False, na=False)]
+        if min_date:
+            df = df[df['booking_date'] >= min_date]
+        if max_date:
+            df = df[df['booking_date'] <= max_date]
+        return df.to_dict('records')
 
 
 

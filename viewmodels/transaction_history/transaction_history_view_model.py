@@ -7,7 +7,6 @@ class TransactionHistoryViewModel(BaseViewModel):
     def __init__(self, request: Request):
         super().__init__(request)
         self.transaction_history = db.get_transaction_history()
-
     def upsert_transaction(self, account_id, booking_date, value_date, description, amount, currency, enhanced_description=None, categories=None, embedding=None):
         db.upsert_transaction(account_id, booking_date, value_date, description, amount, currency, enhanced_description, categories, embedding)
         self.transaction_history = db.get_transaction_history()
@@ -23,3 +22,6 @@ class TransactionHistoryViewModel(BaseViewModel):
     def get_transaction_history(self):
         self.transaction_history = db.get_transaction_history()
         return self.transaction_history
+
+    def search_transaction_history(self, search=None, min_date=None, max_date=None):
+        return db.get_transaction_history(search, min_date, max_date)

@@ -9,19 +9,7 @@
          </button>
             <div>
                 <div class="flex justify-between w-full">
-                    <form class="flex flex-col w-full">
-                        <div class="flex items-center w-full">
-                        <label for="search" class="mr-4">Search:</label>
-                        <input type="text" id="search" name="search" class="input w-[70%]" placeholder="Search">
-                        </div>
-                        <div class="flex items-center">
-                        <label for="date-range" class="mr-4">Date range:</label>
-                        <div id="date-range">
-                            <input type="date" id="date-range-min" name="date_range_min" class="input" placeholder="Date range min">
-                            <input type="date" id="date-range-max" name="date_range_max" class="input" placeholder="Date range max">
-                        </div>
-                        </div>
-                    </form>
+                    {% include 'pages/transaction_history/partials/search_and_filter.html' %}
                 </div>
             </div>
             <div class="h-[90%]">

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, Form, UploadFile, File
+from fastapi import FastAPI, Request, Depends, Form, UploadFile, File, Query
 from typing import Optional
 from fastapi.responses import Response
 from fastapi.templating import Jinja2Templates
@@ -114,6 +114,14 @@ async def generate_transaction_history(request: Request):
     #vector_db.load_dataframe(enhanced)
 
 
+@app.get("/transactions-history")
+async def transactions(request: Request, search: Optional[str] = Query(None), date_range_min: Optional[str] = Query(None), date_range_max: Optional[str] = Query(None)):
+    print("transactions")
+    print(search)
+    print(date_range_min)
+    print(date_range_max)
+    transactions_history = TransactionHistoryViewModel(request).search_transaction_history(search, date_range_min, date_range_max)
+    return templates.TemplateResponse("pages/transaction_history/partials/table_body.html", {"request": request, "transaction_history": transactions_history })
 
 
 

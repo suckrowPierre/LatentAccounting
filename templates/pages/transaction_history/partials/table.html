@@ -14,10 +14,32 @@
                 <th class="w-[16%] border border-black p-1">Value Date</th>
                 <th class="w-[33%] border border-black p-1">Augmented Description</th>
                 <th class="w-[16%] border border-black p-1">Categories</th>
-                <th class="amount border border-black p-1">Amount</th>
+                <th class="border border-black p-1">Amount</th>
                 <th class="border border-black p-1">Currency</th>
             </tr>
         </thead>
 {% include 'pages/transaction_history/partials/table_body.html' %}
     </table>
 </div>
+<script>
+    function calculateAmount () {
+        const amount = document.querySelectorAll('.amount');
+        let sum = 0;
+        amount.forEach((el) => {
+            console.log(el.textContent);
+            sum += parseFloat(el.textContent);
+        });
+        sum = Math.round((sum + Number.EPSILON) * 100) / 100;
+        document.getElementById('calc').textContent = `= ${sum}`;
+    }
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+        if(event.detail.target.id === 'transaction-table-body') {
+            calculateAmount();
+        }
+    });
+    document.addEventListener('DOMContentLoaded', (event) => {
+        calculateAmount();
+    });
+    calculateAmount();
+
+</script>
