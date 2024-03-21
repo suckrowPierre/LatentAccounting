@@ -92,7 +92,6 @@ async def apply_flowchart(request: Request, id: int):
 
 @app.post("/generate_transaction_history")
 async def generate_transaction_history(request: Request):
-    """
     accounts = []
     for account in AccountsViewModel(request).get_accounts():
         # check if account csv dir has file converted.csv
@@ -107,9 +106,8 @@ async def generate_transaction_history(request: Request):
     print("enhanced data")
     await csv_file_manger.save_pandas_to_csv(enhanced, "transaction_history", "enhanced")
     print("saved enhanced data")
-    """
-    df_enhanced = await csv_file_manger.load_transactions_csv_to_pandas()
-    TransactionHistoryViewModel(request).upsert_transaction_pd_df(df_enhanced)
+    #enhanced = await csv_file_manger.load_transactions_csv_to_pandas()
+    TransactionHistoryViewModel(request).upsert_transaction_pd_df(enhanced)
 
     #vector_db.load_dataframe(enhanced)
 

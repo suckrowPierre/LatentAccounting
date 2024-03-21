@@ -24,13 +24,22 @@
 <script>
     function calculateAmount () {
         const amount = document.querySelectorAll('.amount');
-        let sum = 0;
+        let revenue = 0;
+        let expenditure = 0;
         amount.forEach((el) => {
-            console.log(el.textContent);
-            sum += parseFloat(el.textContent);
+            if (parseFloat(el.textContent) > 0) {
+                revenue += parseFloat(el.textContent);
+            } else {
+                expenditure += parseFloat(el.textContent);
+            }
         });
+        let sum = revenue + expenditure;
         sum = Math.round((sum + Number.EPSILON) * 100) / 100;
+        revenue = Math.round((revenue + Number.EPSILON) * 100) / 100;
+        expenditure = Math.round((expenditure + Number.EPSILON) * 100) / 100;
         document.getElementById('calc').textContent = `= ${sum}`;
+        document.getElementById('revenue').textContent = revenue;
+        document.getElementById('expenditure').textContent = expenditure;
     }
     document.body.addEventListener('htmx:afterSwap', function(event) {
         if(event.detail.target.id === 'transaction-table-body') {

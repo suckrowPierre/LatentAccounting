@@ -15,6 +15,7 @@
             <div class="h-[90%]">
                 {% set transaction_history = page_data.transaction_history %}
                 {% include 'pages/transaction_history/partials/table.html' %}
-                </div>
+            </div>
+            {% include 'pages/transaction_history/partials/revenue_and_expenditures.html' %}
     </div>
 </div>
