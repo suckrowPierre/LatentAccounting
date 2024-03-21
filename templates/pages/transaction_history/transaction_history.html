@@ -1,11 +1,4 @@
-<div class="p-8 h-full">
-    <div class="relative">
-         <button class="btn btn-primary absolute top-0 right-0 underline hover:no-underline"
-                 hx-post="/generate_transaction_history"
-                 hx-target="this"
-                 hx-trigger="click"
-                 hx-swap="none">
-             Generate
-         </button>
-    </div>
+<div class="flex h-full">
+        {% include 'pages/transaction_history/partials/table_wrapper.html' %}
+        {% include 'pages/transaction_history/partials/chat.html' %}
 </div>

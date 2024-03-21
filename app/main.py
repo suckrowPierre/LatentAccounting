@@ -37,7 +37,7 @@ except IOError:
 
 pages = [
     {"title": "Dashboard", "route": "/", "template": "pages/dashboard.html"},
-    {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history/transaction_history.html"},
+    {"title": "Transactions History", "route": "/transactions", "template": "pages/transaction_history/transaction_history.html", "viewModel": TransactionHistoryViewModel},
     {"title": "Bank Accounts", "route": "/banks", "template": "pages/banks/banks.html", "viewModel": AccountsViewModel},
     {"title": "Settings", "route": "/settings", "template": "pages/settings/settings.html", "viewModel": SettingsViewModel},
 ]

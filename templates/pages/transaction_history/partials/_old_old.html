@@ -1,0 +1,35 @@
+<table class="w-full table-fixed text-sm border-collapse">
+    <thead class="sticky">
+                <tr>
+            <th class="w-[16%]"></th>
+            <th class="w-[16%]"></th>
+            <th class="w-[33%]"></th>
+            <th class="w-[16%]"></th>
+            <th id="calc" class="border border-black p-1">= 100</th>
+            <th class=""></th>
+        </tr>
+        <tr>
+            <th class="w-[16%] border border-black p-1">Booking Date</th>
+            <th class="w-[16%] border border-black p-1">Value Date</th>
+            <th class="w-[33%] border border-black p-1">Augmented Description</th>
+            <th class="w-[16%] border border-black p-1">Categories</th>
+            <th class="amount border border-black p-1">Amount</th>
+            <th class="border border-black p-1">Currency</th>
+        </tr>
+
+    </thead>
+    <div class="h-80 overflow-hidden w-full">
+    <tbody class="text-xs" >
+        {% for transaction in transaction_history %}
+        <tr>
+            <td class="border border-black p-1">{{ transaction.booking_date }}</td>
+            <td class="border border-black p-1">{{ transaction.value_date }}</td>
+            <td class="border border-black p-1">{{ transaction.enhanced_description }}</td>
+            <td class="border border-black p-1">{{ transaction.categories }}</td>
+            <td class="border border-black p-1">{{ transaction.amount }}</td>
+            <td class="border border-black p-1">{{ transaction.currency }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </div>
+</table>

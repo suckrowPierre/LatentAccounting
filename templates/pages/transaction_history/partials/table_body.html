@@ -1,0 +1,12 @@
+        <tbody class="text-xs">
+            {% for transaction in transaction_history %}
+            <tr>
+                <td class="border border-black p-1">{{ transaction.booking_date }}</td>
+                <td class="border border-black p-1">{{ transaction.value_date }}</td>
+                <td class="border border-black p-1">{{ transaction.enhanced_description }}</td>
+                <td class="border border-black p-1">{{ transaction.categories }}</td>
+                <td class="border border-black p-1">{{ transaction.amount }}</td>
+                <td class="border border-black p-1">{{ transaction.currency }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>

@@ -1,0 +1,32 @@
+<div class="w-full flex items-center border-2 border-black rounded-xl mr-4">
+    <div id="transaction-history-table-wrapper" class="h-full w-full p-8 relative">
+         <button class="btn btn-primary absolute top-0 right-0 mr-8 mt-4 underline hover:no-underline"
+                 hx-post="/generate_transaction_history"
+                 hx-target="this"
+                 hx-trigger="click"
+                 hx-swap="none">
+             Generate
+         </button>
+            <div>
+                <div class="flex justify-between w-full">
+                    <form class="flex flex-col w-full">
+                        <div class="flex items-center w-full">
+                        <label for="search" class="mr-4">Search:</label>
+                        <input type="text" id="search" name="search" class="input w-[70%]" placeholder="Search">
+                        </div>
+                        <div class="flex items-center">
+                        <label for="date-range" class="mr-4">Date range:</label>
+                        <div id="date-range">
+                            <input type="date" id="date-range-min" name="date_range_min" class="input" placeholder="Date range min">
+                            <input type="date" id="date-range-max" name="date_range_max" class="input" placeholder="Date range max">
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="h-[90%]">
+                {% set transaction_history = page_data.transaction_history %}
+                {% include 'pages/transaction_history/partials/table.html' %}
+                </div>
+    </div>
+</div>

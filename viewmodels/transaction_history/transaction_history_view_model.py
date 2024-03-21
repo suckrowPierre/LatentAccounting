@@ -20,4 +20,6 @@ class TransactionHistoryViewModel(BaseViewModel):
         transactions = pd_df.to_dict('records')
         self.upsert_transactions(transactions)
 
-
+    def get_transaction_history(self):
+        self.transaction_history = db.get_transaction_history()
+        return self.transaction_history
