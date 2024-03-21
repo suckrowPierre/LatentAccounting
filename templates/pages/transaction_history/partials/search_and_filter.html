@@ -1,0 +1,24 @@
+<form class="flex flex-col w-full"
+      hx-get="/transactions-history"
+      hx-target="#transaction-table-body"
+      hx-swap="outerHTML"
+      hx-trigger="change">
+    <div class="flex items-center w-full">
+        <label for="search" class="mr-4">Search:</label>
+        <input type="text" id="search" name="search" class="input w-[70%]" placeholder="Search">
+    </div>
+    <div class="flex items-center">
+        <label for="date-range" class="mr-4">Date range:</label>
+        <div id="date-range">
+            <input type="date" id="date-range-min" name="date_range_min" class="input" placeholder="Date range min">
+            <input type="date" id="date-range-max" name="date_range_max" class="input" placeholder="Date range max">
+        </div>
+    </div>
+</form>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+    });
+  });
+</script>

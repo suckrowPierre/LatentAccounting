@@ -1,6 +1,6 @@
 from fastapi import Request
 from viewmodels.base_view_model import BaseViewModel
-import app.account_database as db
+import app.sqlite_database as db
 
 
 class AccountsViewModel(BaseViewModel):
@@ -13,8 +13,8 @@ class AccountsViewModel(BaseViewModel):
         self.accounts = db.get_accounts()
         return db_id
 
-    def update_account(self, account_id, name, account_number):
-        update = db.update_account(account_id, name, account_number)
+    def update_account(self, account_id, name, account_number, csv_seperator, csv_columns, csv_file_name, flowchart_diagram):
+        update = db.update_account(account_id, name, account_number, csv_seperator, csv_columns, csv_file_name, flowchart_diagram)
         self.accounts = db.get_accounts()
         return update
 

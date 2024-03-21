@@ -1,0 +1,21 @@
+<div class="w-full flex items-center border-2 border-black rounded-xl mr-4">
+    <div id="transaction-history-table-wrapper" class="h-full w-full p-8 relative">
+         <button class="btn btn-primary absolute top-0 right-0 mr-8 mt-4 underline hover:no-underline"
+                 hx-post="/generate_transaction_history"
+                 hx-target="this"
+                 hx-trigger="click"
+                 hx-swap="none">
+             Generate
+         </button>
+            <div>
+                <div class="flex justify-between w-full">
+                    {% include 'pages/transaction_history/partials/search_and_filter.html' %}
+                </div>
+            </div>
+            <div class="h-[90%]">
+                {% set transaction_history = page_data.transaction_history %}
+                {% include 'pages/transaction_history/partials/table.html' %}
+            </div>
+            {% include 'pages/transaction_history/partials/revenue_and_expenditures.html' %}
+    </div>
+</div>
