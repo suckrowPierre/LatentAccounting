@@ -23,10 +23,14 @@ class Categories(Enum):
     EQUIPMENT = "equipment"
     MUSIC = "music"
     HOBBIES = "hobbies"
+    EDUCATION = "education"
+    LITERATURE = "literature"
 
     HEALTH = "health"
     SPORTS = "sports"
     PERSONAL_CARE = "personal care"
+    ANIMALS = "animals"
+    FAMILY = "family"
 
     SAVINGS = "savings"
     LOAN = "loan"
