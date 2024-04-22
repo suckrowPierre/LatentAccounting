@@ -1,6 +1,9 @@
 # LatentAccounting
 
-A web app built with FastAPI and HTMX to help interact with the Latent Accounting architecture.
+A web app for personal bookkeeping and accounting using NLP technologies. 
+Built with FastAPI and HTMX to help interact with the Latent Accounting architecture.
+
+Published in [Wicked Solutions Volume 1](https://wicked.udk.ai/1.html)
 
 ## Installation
 
